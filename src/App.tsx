@@ -100,6 +100,7 @@ export default function App() {
 
               {/* External CTA */}
               <HStack pt="2">
+                <Text>Bryan Johnson's Don't Die</Text>
                 <Button
                   as={chakra.a}
                   href="https://dontdie.bryanjohnson.com/"
