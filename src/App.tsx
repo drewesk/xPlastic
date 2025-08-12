@@ -16,11 +16,11 @@ import {
 import YouTubePlayer from "react-youtube"; // value import (default)
 
 export default function App() {
-  const [val, setVal] = useState(100);
+  const [val, setVal] = useState(100000);
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
-    const timer = setTimeout(() => setVal(1_111_111), 300);
+    const timer = setTimeout(() => setVal(100000000), 300);
     return () => clearTimeout(timer);
   }, []);
 
@@ -95,7 +95,7 @@ export default function App() {
             left="0"
             zIndex={0}
             bg="white"
-            w="250px" // ← change this
+            w="150px" // ← change this
           />
           <Box
             aria-hidden
@@ -104,7 +104,7 @@ export default function App() {
             right="0"
             zIndex={0}
             bg="white"
-            w="250px" // ← and this
+            w="150px" // ← and this
           />
 
           <Card.Root
@@ -112,13 +112,13 @@ export default function App() {
             mt={55}
             rounded="2xl"
             shadow="xl"
-            borderWidth="1px"
+            borderWidth="3px"
             w="full"
             maxW="xl"
             mx="auto"
           >
             {/* HERO */}
-            <Card.Body p={{ base: 6, md: 10 }}>
+            <Card.Body p={{ base: 600, md: 100 }}>
               <Stack align="center" textAlign="center">
                 <Heading
                   mb={35}
@@ -157,7 +157,7 @@ export default function App() {
                   >
                     <Card.Body gap="4" align="center">
                       <Text fontSize="sm" color="whiteAlpha.700">
-                        Plastics kept out of your routine (lifetime)
+                        Marine animals killed each year:
                       </Text>
                       <Heading as="div" size="3xl" letterSpacing="-0.03em">
                         <NumberFlow
