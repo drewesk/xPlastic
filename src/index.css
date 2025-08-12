@@ -2,10 +2,48 @@
   color-scheme: light dark;
 }
 
+.card-1 {
+  background-color: #1a202cf0;
+} /* gray.800 ~85% opacity */
+
+.card-2 {
+  background-color: #050507db;
+} /* gray.800 ~85% opacity */
+
 html,
 body,
 #root {
   height: 100%;
+}
+
+/* Fullscreen background, doesn't affect layout */
+.yt-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0; /* put behind content */
+  pointer-events: none; /* keep page clickable */
+}
+
+/* Make the video cover the viewport (crop to fill) */
+.yt-bg iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 177.78vh; /* 100vh * 16/9 */
+  height: 100vh;
+}
+
+@media (min-aspect-ratio: 16/9) {
+  .yt-bg iframe {
+    width: 100vw;
+    height: 80.25vw; /* 100vw * 9/16 */
+  }
+}
+/* Ensure your content sits above */
+.content {
+  position: relative;
+  z-index: 1;
 }
 
 .copyright {
