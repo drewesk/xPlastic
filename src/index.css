@@ -10,7 +10,7 @@
 /* Cards */
 .card-1 {
   background-color: #1a202cf0;
-} /* gray.800 ~85% opacity */
+} /* gray.800 ~85% */
 .card-2 {
   background-color: #050507db;
   z-index: 1;
@@ -20,10 +20,9 @@
 .yt-bg {
   position: fixed;
   inset: 0;
-  z-index: -2; /* put behind masks/arms/content */
+  z-index: -2; /* put behind masks/content */
   pointer-events: none; /* keep page clickable */
 }
-
 /* Fade overlay over the video */
 .yt-bg::after {
   content: "";
@@ -32,12 +31,11 @@
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.5) 0%,
-    rgba(0, 0, 0, 0.76) 60%,
-    rgba(0, 0, 0, 0.94) 100%
+    rgba(24, 145, 211, 0.3) 0%,
+    rgba(24, 145, 211, 0.66) 60%,
+    rgb(15, 32, 27) 100%
   );
 }
-
 /* Make the video cover the viewport (crop to fill) */
 .yt-bg iframe {
   position: absolute;
@@ -47,80 +45,34 @@
   width: 177.78vh; /* 100vh * 16/9 */
   height: 100vh;
 }
-
 @media (min-aspect-ratio: 16/9) {
   .yt-bg iframe {
     width: 100vw;
     height: 56.25vw; /* 100vw * 9/16 */
   }
 }
-.rail-arm {
-  position: fixed;
-  pointer-events: none;
-  z-index: -1;
-  top: 45%;
-  transform: translateY(-50%);
-  width: clamp(220px, 40vw, 640px);
-  height: clamp(120px, 30vh, 320px);
 
-  fill: none;
-  /* DO NOT set stroke here (it overrides the path’s gradient) */
-  stroke-width: 14;
-  stroke-linecap: butt; /* crisp fins */
-  stroke-linejoin: miter;
-  stroke-miterlimit: 8;
-  vector-effect: non-scaling-stroke;
-  shape-rendering: geometricPrecision;
-  filter: none;
+/* =========================
+   Parallax waves (new layer)
+   ========================= */
+.parallax-waves {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* above video (-2), below content (default) */
+  pointer-events: none; /* never block UI */
+  overflow: hidden;
   will-change: transform;
 }
-
-.rail-arm.left {
-  left: 0;
+.parallax-waves img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  pointer-events: none;
 }
-.rail-arm.right {
-  right: 0;
-  transform: translateY(-50%) scaleX(-1);
-}
-
-/* animated dash = subtle forward “flow” */
-.rail-arm path {
-  /* fin-like rhythm: long crest + short gaps */
-  stroke-dasharray: 42 10 16 10 24 10 14 10;
-  animation: rail-dash 8s linear infinite;
-}
-
-@keyframes rail-dash {
-  to {
-    stroke-dashoffset: -220;
-  }
-}
-
-/* gentle parallax sway for each arm (optional) */
-@keyframes rail-sway {
-  0% {
-    transform: translateY(-50%) translateX(0);
-  }
-  50% {
-    transform: translateY(-50%) translateX(-6px);
-  }
-  100% {
-    transform: translateY(-50%) translateX(0);
-  }
-}
-.rail-arm.left {
-  animation: rail-sway 10s ease-in-out infinite;
-}
-.rail-arm.right {
-  animation: rail-sway 10s ease-in-out -5s infinite;
-}
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .rail-arm,
-  .rail-arm path {
-    animation: none !important;
-  }
+@media (max-width: 560px), (prefers-reduced-motion: reduce) {
+  .parallax-waves {
+    display: none;
+  } /* keep small/reduced-motion clean */
 }
 
 /* Flowing underline link for “Don’t Die” */
@@ -147,9 +99,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rail-arm path {
-    animation: none;
-  }
   .link-flow::after {
     animation: none;
   }
