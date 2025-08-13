@@ -12,8 +12,7 @@ import {
   Container,
   chakra,
 } from "@chakra-ui/react";
-
-import YouTubePlayer from "react-youtube"; // value import (default)
+import YouTubePlayer from "react-youtube";
 
 export default function App() {
   const [val, setVal] = useState(100000);
@@ -39,6 +38,7 @@ export default function App() {
 
   return (
     <>
+      {/* Background video (non-interactive) */}
       <YouTubePlayer
         className="yt-bg"
         videoId="T2FNqfpdHV8"
@@ -47,15 +47,16 @@ export default function App() {
           e.target.setPlaybackRate(0.75);
           e.target.playVideo();
         }}
-        onEnd={(e) => e.target.playVideo()} // belt-and-suspenders
+        onEnd={(e) => e.target.playVideo()}
       />
 
+      {/* Header stays above everything */}
       <Box
         as="header"
         position="fixed"
         top="0"
         insetX="0"
-        zIndex={2}
+        zIndex={4}
         bg="blue.600"
         color="white"
         borderBottomWidth="1px"
@@ -85,30 +86,34 @@ export default function App() {
         </Container>
       </Box>
 
-      <Box minH="100dvh" position="relative" color="white">
+      {/* Main content sits in its own stacking context */}
+      <Box className="app-root" minH="100dvh" position="relative" color="white">
         <Container maxW="6xl" py={{ base: 10, md: 16 }}>
-          {/* SIDE MASKS (white) */}
+          {/* SIDE MASKS (keep above video, below content) */}
           <Box
             aria-hidden
             position="fixed"
             insetY="0"
             left="0"
-            zIndex={0}
+            zIndex={-1}
             bg="white"
-            w="150px" // ← change this
+            w={{ base: "80px", md: "120px" }}
+            pointerEvents="none"
           />
           <Box
             aria-hidden
             position="fixed"
             insetY="0"
             right="0"
-            zIndex={0}
+            zIndex={-1}
             bg="white"
-            w="150px" // ← and this
+            w={{ base: "80px", md: "120px" }}
+            pointerEvents="none"
           />
 
-          {/* side-arms popping out */}
+          {/* Decorative side arms (purely visual, never capture clicks) */}
           <svg
+            aria-hidden
             className="rail-arm left"
             viewBox="7 0 100 50"
             preserveAspectRatio="none"
@@ -116,6 +121,7 @@ export default function App() {
             <path d="M0,30 C 25,20 55,42 85,24 95,20 100,18 100,18" />
           </svg>
           <svg
+            aria-hidden
             className="rail-arm right"
             viewBox="9 0 100 50"
             preserveAspectRatio="none"
@@ -134,18 +140,16 @@ export default function App() {
             mx="auto"
           >
             {/* HERO */}
-            <Card.Body p={{ base: 600, md: 100 }}>
-              <Stack align="center" textAlign="center">
+            <Card.Body p={{ base: 6, md: 10 }}>
+              <Stack align="center" textAlign="center" gap={4}>
                 <Heading
-                  mb={35}
                   as="h1"
                   color="white"
                   size={{ base: "2xl", md: "4xl" }}
                   lineHeight="1.1"
                   fontWeight="extrabold"
                   letterSpacing="-0.02em"
-                  bgImage="none"
-                  bgClip="border-box"
+                  mb={2}
                 >
                   Xplastic.io
                 </Heading>
@@ -155,13 +159,14 @@ export default function App() {
                   color="whiteAlpha.800"
                   maxW="3xl"
                 >
-                  Reduce your exposure to harmful micro-plastics 🔪
-                  world-changing Tech
+                  Reduce your exposure to harmful micro-plastics 🔪 —
+                  world-changing tech.
                 </Text>
+
                 <Box position="relative" w="full" maxW="xl" mx="auto">
                   {/* COUNTER CARD */}
                   <Card.Root
-                    mb={9}
+                    mb={6}
                     className="card-1"
                     rounded="2xl"
                     shadow="xl"
@@ -173,14 +178,13 @@ export default function App() {
                   >
                     <Card.Body gap="4" align="center">
                       <Text fontSize="lg" color="whiteAlpha.700">
-                        Over: {}
+                        Over{" "}
                         <NumberFlow
                           value={val}
                           plugins={[continuous]}
                           format={{ useGrouping: true }}
-                        />
-                        <br />
-                        Marine Animals dead each year from plastics
+                        />{" "}
+                        marine animals die each year from plastics.
                       </Text>
 
                       {/* Email capture */}
@@ -188,37 +192,53 @@ export default function App() {
                         as="form"
                         onSubmit={(e) => e.preventDefault()}
                         w="full"
+                        aria-labelledby="newsletter-title"
                       >
-                        <Text fontSize="sm" color="whiteAlpha.700" mb="2">
+                        <Text
+                          id="newsletter-title"
+                          fontSize="sm"
+                          color="whiteAlpha.700"
+                          mb="2"
+                        >
                           Join the mailing list
                         </Text>
-                        <HStack w="full" spacing="3">
+                        <HStack w="full" spacing="3" align="stretch">
+                          <label className="visually-hidden" htmlFor="email">
+                            Email address
+                          </label>
                           <Input
-                            autoFocus
+                            id="email"
                             type="email"
-                            placeholder="janedoe@hotmail.com"
+                            placeholder="you@company.com"
                             bg="white"
                             color="gray.900"
                             _placeholder={{ color: "gray.500" }}
+                            required
                           />
                           <Button type="submit" colorScheme="teal">
                             Join
                           </Button>
                         </HStack>
+                        {/* space for inline success/error messages */}
+                        <Box
+                          aria-live="polite"
+                          mt="2"
+                          fontSize="sm"
+                          color="whiteAlpha.800"
+                        />
                       </Box>
 
-                      {/* External CTA */}
-                      <HStack pt="2">
-                        <Text>Bryan Johnson's Don't Die</Text>
-                        <Button
-                          as={chakra.a}
+                      {/* External CTA with flowing underline */}
+                      <HStack pt="2" gap={3} wrap="wrap">
+                        <Text>Inspired by Bryan Johnson’s</Text>
+                        <chakra.a
                           href="https://dontdie.bryanjohnson.com/"
                           target="_blank"
                           rel="noopener noreferrer"
-                          _hover={{ textDecorationColor: "teal.200" }}
+                          className="link-flow"
                         >
                           Don’t Die
-                        </Button>
+                        </chakra.a>
                       </HStack>
                     </Card.Body>
                   </Card.Root>
@@ -229,12 +249,13 @@ export default function App() {
         </Container>
       </Box>
 
+      {/* Footer stays above everything */}
       <Box
         as="footer"
         position="fixed"
         bottom="0"
         insetX="0"
-        zIndex={2}
+        zIndex={4}
         bg="blue.700"
         color="white"
         borderTopWidth="1px"
@@ -242,7 +263,7 @@ export default function App() {
         shadow="sm"
       >
         <Container maxW="6xl" py={{ base: 4, md: 5 }}>
-          <HStack justify="space-between">
+          <HStack justify="space-between" wrap="wrap" gap={2}>
             <Text fontWeight="semibold">© {currentYear} Xplastic.io</Text>
             <Text fontSize="sm" opacity={0.8}>
               All rights reserved.

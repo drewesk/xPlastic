@@ -2,40 +2,39 @@
   color-scheme: light dark;
 }
 
+/* Stacking context so negative z-layers never swallow content */
+#root {
+  isolation: isolate;
+}
+
+/* Cards */
 .card-1 {
   background-color: #1a202cf0;
 } /* gray.800 ~85% opacity */
-
 .card-2 {
   background-color: #050507db;
-  z-index: 2;
-} /* gray.800 ~85% opacity */
-
-html,
-body,
-#root {
-  height: 100%;
+  z-index: 1;
 }
 
-/* Fullscreen background, doesn't affect layout */
+/* Fullscreen background, behind EVERYTHING */
 .yt-bg {
   position: fixed;
   inset: 0;
-  z-index: 0; /* put behind content */
+  z-index: -2; /* put behind masks/arms/content */
   pointer-events: none; /* keep page clickable */
 }
 
 /* Fade overlay over the video */
-.yt-bg::after{
+.yt-bg::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.492) 0%,
-    rgba(0, 0, 0, 0.758) 60%,
-    rgba(0, 0, 0, 0.936) 100%
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.76) 60%,
+    rgba(0, 0, 0, 0.94) 100%
   );
 }
 
@@ -52,13 +51,15 @@ body,
 @media (min-aspect-ratio: 16/9) {
   .yt-bg iframe {
     width: 100vw;
-    height: 56.25vw; /
+    height: 56.25vw; /* 100vw * 9/16 */
   }
+}
 
+/* Decorative arms – always behind content, never capture clicks */
 .rail-arm {
   position: fixed;
   pointer-events: none;
-  z-index: 0; /* lower than rails */
+  z-index: -1; /* above video (-2), below content (>=0) */
   fill: none;
   stroke: #76ccf7;
   stroke-width: 14;
@@ -70,10 +71,82 @@ body,
   width: clamp(220px, 40vw, 640px);
   height: clamp(120px, 30vh, 320px);
 }
+.rail-arm path {
+  stroke-dasharray: 14 10;
+  animation: railflow 6s linear infinite;
+}
+@keyframes railflow {
+  to {
+    stroke-dashoffset: -240;
+  }
+}
 
-.rail-arm.left  { left: 0; }
-.rail-arm.right { right: 0; transform: translateY(-50%) scaleX(-1); }
+.rail-arm.left {
+  left: 0;
+}
+.rail-arm.right {
+  right: 0;
+  transform: translateY(-50%) scaleX(-1);
+}
 
-@media (max-width: 900px){
-  .rail-arm{ width: 50vw; height: 24vh; }
+@media (max-width: 900px) {
+  .rail-arm {
+    width: 50vw;
+    height: 24vh;
+  }
+}
+@media (max-width: 560px) {
+  .rail-arm {
+    display: none;
+  } /* keep small screens clean */
+}
+
+/* Flowing underline link for “Don’t Die” */
+.link-flow {
+  position: relative;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+.link-flow::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  background: linear-gradient(90deg, #40e3ff 0 35%, transparent 35% 100%);
+  background-size: 40px 2px;
+  animation: marquee 2.5s linear infinite;
+}
+@keyframes marquee {
+  to {
+    background-position-x: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rail-arm path {
+    animation: none;
+  }
+  .link-flow::after {
+    animation: none;
+  }
+}
+
+/* A11y helper for hidden labels */
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+/* Base document sizing */
+html,
+body,
+#root {
+  height: 100%;
 }
