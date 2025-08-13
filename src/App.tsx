@@ -110,8 +110,7 @@ export default function App() {
             w={{ base: "80px", md: "120px" }}
             pointerEvents="none"
           />
-
-          {/* LEFT ARM — shark-fin wave with animated gradient */}
+          {/* LEFT ARM — Kanagawa texture via mask */}
           <svg
             aria-hidden
             className="rail-arm left"
@@ -119,28 +118,50 @@ export default function App() {
             preserveAspectRatio="none"
           >
             <defs>
-              <linearGradient
-                id="ink"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#3dd5ff" />
-                <stop offset="60%" stopColor="#9ae6ff" />
-                <stop offset="100%" stopColor="#3dd5ff" />
-                <animateTransform
-                  attributeName="gradientTransform"
-                  type="translate"
-                  from="0 0"
-                  to="40 0"
-                  dur="6s"
-                  repeatCount="indefinite"
+              {/* Create a mask shaped like a thick version of the fin path */}
+              <mask id="armMaskL" maskUnits="userSpaceOnUse">
+                {/* black = transparent, white = visible */}
+                <rect width="100%" height="100%" fill="black" />
+                <path
+                  d="M 0 34
+           L 8 26   Q 12 10 20 26
+           L 28 22  Q 34  8 42 24
+           L 50 20  Q 56  9 64 22
+           L 72 18  Q 78  7 86 20
+           L 100 16"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={14} /* thickness of the arm */
+                  strokeLinecap="butt"
+                  strokeLinejoin="miter"
+                  vectorEffect="non-scaling-stroke"
                 />
-              </linearGradient>
+              </mask>
             </defs>
 
+            {/* Move a large image behind the mask for motion */}
+            <g mask="url(#armMaskL)">
+              <image
+                href="/great_wave.webp" /* hi-res in /public */
+                x={-50}
+                y={-30}
+                width={250}
+                height={120}
+                preserveAspectRatio="xMidYMid slice"
+                style={{ imageRendering: "crisp-edges" }}
+              >
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  from="0 0"
+                  to="-80 0"
+                  dur="10s"
+                  repeatCount="indefinite"
+                />
+              </image>
+            </g>
+
+            {/* Optional subtle outline to separate from background */}
             <path
               d="M 0 34
        L 8 26   Q 12 10 20 26
@@ -148,11 +169,14 @@ export default function App() {
        L 50 20  Q 56  9 64 22
        L 72 18  Q 78  7 86 20
        L 100 16"
-              stroke="url(#ink)"
+              fill="none"
+              stroke="rgba(0,0,0,0.85)"
+              strokeWidth={2}
+              vectorEffect="non-scaling-stroke"
             />
           </svg>
 
-          {/* RIGHT ARM — mirrored by CSS scaleX(-1) */}
+          {/* RIGHT ARM — same mask logic; mirrored by CSS scaleX(-1) */}
           <svg
             aria-hidden
             className="rail-arm right"
@@ -160,27 +184,45 @@ export default function App() {
             preserveAspectRatio="none"
           >
             <defs>
-              <linearGradient
-                id="inkR"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-                gradientUnits="userSpaceOnUse"
+              <mask id="armMaskR" maskUnits="userSpaceOnUse">
+                <rect width="100%" height="100%" fill="black" />
+                <path
+                  d="M 0 34
+           L 8 26   Q 12 10 20 26
+           L 28 22  Q 34  8 42 24
+           L 50 20  Q 56  9 64 22
+           L 72 18  Q 78  7 86 20
+           L 100 16"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={14}
+                  strokeLinecap="butt"
+                  strokeLinejoin="miter"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </mask>
+            </defs>
+
+            <g mask="url(#armMaskR)">
+              <image
+                href="/great_wave.webp"
+                x={-30}
+                y={-30}
+                width={250}
+                height={120}
+                preserveAspectRatio="xMidYMid slice"
+                style={{ imageRendering: "crisp-edges" }}
               >
-                <stop offset="0%" stopColor="#3dd5ff" />
-                <stop offset="60%" stopColor="#9ae6ff" />
-                <stop offset="100%" stopColor="#3dd5ff" />
                 <animateTransform
-                  attributeName="gradientTransform"
+                  attributeName="transform"
                   type="translate"
-                  from="20 0"
-                  to="60 0"
-                  dur="6s"
+                  from="-40 0"
+                  to="-120 0"
+                  dur="10s"
                   repeatCount="indefinite"
                 />
-              </linearGradient>
-            </defs>
+              </image>
+            </g>
 
             <path
               d="M 0 34
@@ -189,7 +231,10 @@ export default function App() {
        L 50 20  Q 56  9 64 22
        L 72 18  Q 78  7 86 20
        L 100 16"
-              stroke="url(#inkR)"
+              fill="none"
+              stroke="rgba(0,0,0,0.85)"
+              strokeWidth={2}
+              vectorEffect="non-scaling-stroke"
             />
           </svg>
 
