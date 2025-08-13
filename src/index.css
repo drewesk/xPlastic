@@ -54,31 +54,25 @@
     height: 56.25vw; /* 100vw * 9/16 */
   }
 }
-
-/* Decorative arms – always behind content, never capture clicks */
 .rail-arm {
   position: fixed;
   pointer-events: none;
-  z-index: -1; /* above video (-2), below content (>=0) */
-  fill: none;
-  stroke: #76ccf7;
-  stroke-width: 14;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  z-index: -1;
   top: 45%;
   transform: translateY(-50%);
   width: clamp(220px, 40vw, 640px);
   height: clamp(120px, 30vh, 320px);
-}
-.rail-arm path {
-  stroke-dasharray: 14 10;
-  animation: railflow 6s linear infinite;
-}
-@keyframes railflow {
-  to {
-    stroke-dashoffset: -240;
-  }
+
+  fill: none;
+  /* DO NOT set stroke here (it overrides the path’s gradient) */
+  stroke-width: 14;
+  stroke-linecap: butt; /* crisp fins */
+  stroke-linejoin: miter;
+  stroke-miterlimit: 8;
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision;
+  filter: none;
+  will-change: transform;
 }
 
 .rail-arm.left {
@@ -89,16 +83,44 @@
   transform: translateY(-50%) scaleX(-1);
 }
 
-@media (max-width: 900px) {
-  .rail-arm {
-    width: 50vw;
-    height: 24vh;
+/* animated dash = subtle forward “flow” */
+.rail-arm path {
+  /* fin-like rhythm: long crest + short gaps */
+  stroke-dasharray: 42 10 16 10 24 10 14 10;
+  animation: rail-dash 8s linear infinite;
+}
+
+@keyframes rail-dash {
+  to {
+    stroke-dashoffset: -220;
   }
 }
-@media (max-width: 560px) {
-  .rail-arm {
-    display: none;
-  } /* keep small screens clean */
+
+/* gentle parallax sway for each arm (optional) */
+@keyframes rail-sway {
+  0% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-50%) translateX(-6px);
+  }
+  100% {
+    transform: translateY(-50%) translateX(0);
+  }
+}
+.rail-arm.left {
+  animation: rail-sway 10s ease-in-out infinite;
+}
+.rail-arm.right {
+  animation: rail-sway 10s ease-in-out -5s infinite;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .rail-arm,
+  .rail-arm path {
+    animation: none !important;
+  }
 }
 
 /* Flowing underline link for “Don’t Die” */

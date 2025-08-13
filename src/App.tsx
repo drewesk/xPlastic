@@ -111,22 +111,86 @@ export default function App() {
             pointerEvents="none"
           />
 
-          {/* Decorative side arms (purely visual, never capture clicks) */}
+          {/* LEFT ARM — shark-fin wave with animated gradient */}
           <svg
             aria-hidden
             className="rail-arm left"
-            viewBox="7 0 100 50"
+            viewBox="0 0 100 50"
             preserveAspectRatio="none"
           >
-            <path d="M0,30 C 25,20 55,42 85,24 95,20 100,18 100,18" />
+            <defs>
+              <linearGradient
+                id="ink"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0%" stopColor="#3dd5ff" />
+                <stop offset="60%" stopColor="#9ae6ff" />
+                <stop offset="100%" stopColor="#3dd5ff" />
+                <animateTransform
+                  attributeName="gradientTransform"
+                  type="translate"
+                  from="0 0"
+                  to="40 0"
+                  dur="6s"
+                  repeatCount="indefinite"
+                />
+              </linearGradient>
+            </defs>
+
+            <path
+              d="M 0 34
+       L 8 26   Q 12 10 20 26
+       L 28 22  Q 34  8 42 24
+       L 50 20  Q 56  9 64 22
+       L 72 18  Q 78  7 86 20
+       L 100 16"
+              stroke="url(#ink)"
+            />
           </svg>
+
+          {/* RIGHT ARM — mirrored by CSS scaleX(-1) */}
           <svg
             aria-hidden
             className="rail-arm right"
-            viewBox="9 0 100 50"
+            viewBox="0 0 100 50"
             preserveAspectRatio="none"
           >
-            <path d="M0,30 C 25,20 55,42 85,24 95,20 100,18 100,18" />
+            <defs>
+              <linearGradient
+                id="inkR"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0%" stopColor="#3dd5ff" />
+                <stop offset="60%" stopColor="#9ae6ff" />
+                <stop offset="100%" stopColor="#3dd5ff" />
+                <animateTransform
+                  attributeName="gradientTransform"
+                  type="translate"
+                  from="20 0"
+                  to="60 0"
+                  dur="6s"
+                  repeatCount="indefinite"
+                />
+              </linearGradient>
+            </defs>
+
+            <path
+              d="M 0 34
+       L 8 26   Q 12 10 20 26
+       L 28 22  Q 34  8 42 24
+       L 50 20  Q 56  9 64 22
+       L 72 18  Q 78  7 86 20
+       L 100 16"
+              stroke="url(#inkR)"
+            />
           </svg>
 
           <Card.Root
