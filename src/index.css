@@ -2,28 +2,39 @@
   color-scheme: light dark;
 }
 
-/* Stacking context so negative z-layers never swallow content */
+/* Stacking context */
 #root {
   isolation: isolate;
 }
 
-/* Cards */
+/* Cards — richer, glassy */
 .card-1 {
-  background-color: #1a202cf0;
-} /* gray.800 ~85% */
+  background-color: rgba(7, 12, 20, 0.9);
+} /* deeper glass */
 .card-2 {
-  background-color: #050507db;
+  background-color: rgba(4, 8, 14, 0.86);
   z-index: 1;
 }
 
-/* Fullscreen background, behind EVERYTHING */
+/* Glass helpers */
+.glass {
+  backdrop-filter: saturate(140%) blur(10px);
+  border: 1px solid rgba(64, 227, 255, 0.18);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+.glass-strong {
+  backdrop-filter: saturate(160%) blur(12px);
+  border: 1px solid rgba(64, 227, 255, 0.25);
+}
+
+/* Fullscreen background (unchanged fade) */
 .yt-bg {
   position: fixed;
   inset: 0;
-  z-index: -2; /* put behind masks/content */
-  pointer-events: none; /* keep page clickable */
+  z-index: -2;
+  pointer-events: none;
 }
-/* Fade overlay over the video */
 .yt-bg::after {
   content: "";
   position: absolute;
@@ -36,30 +47,27 @@
     rgb(15, 32, 27) 100%
   );
 }
-/* Make the video cover the viewport (crop to fill) */
 .yt-bg iframe {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 177.78vh; /* 100vh * 16/9 */
+  width: 177.78vh;
   height: 100vh;
 }
 @media (min-aspect-ratio: 16/9) {
   .yt-bg iframe {
     width: 100vw;
-    height: 56.25vw; /* 100vw * 9/16 */
+    height: 56.25vw;
   }
 }
 
-/* =========================
-   Parallax waves (new layer)
-   ========================= */
+/* Parallax waves */
 .parallax-waves {
   position: absolute;
   inset: 0;
-  z-index: 1; /* above video (-2), below content (default) */
-  pointer-events: none; /* never block UI */
+  z-index: 1;
+  pointer-events: none;
   overflow: hidden;
   will-change: transform;
 }
@@ -68,14 +76,48 @@
   height: auto;
   object-fit: cover;
   pointer-events: none;
+  will-change: transform;
 }
 @media (max-width: 560px), (prefers-reduced-motion: reduce) {
   .parallax-waves {
     display: none;
-  } /* keep small/reduced-motion clean */
+  }
 }
 
-/* Flowing underline link for “Don’t Die” */
+/* Professional micro-animations */
+.pop-up {
+  opacity: 0;
+  transform: translateY(12px) scale(0.995);
+  animation: popUp 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms forwards;
+}
+@keyframes popUp {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #22d3ee, #14b8a6);
+  color: #031016;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.75rem 1.1rem;
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 38px rgba(34, 211, 238, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+/* Flowing underline link */
 .link-flow {
   position: relative;
   font-weight: 700;
@@ -91,7 +133,7 @@
   height: 2px;
   background: linear-gradient(90deg, #40e3ff 0 35%, transparent 35% 100%);
   background-size: 40px 2px;
-  animation: marquee 2.5s linear infinite;
+  animation: marquee 2.4s linear infinite;
 }
 @keyframes marquee {
   to {
@@ -104,7 +146,7 @@
   }
 }
 
-/* A11y helper for hidden labels */
+/* A11y helper */
 .visually-hidden {
   position: absolute !important;
   clip: rect(0 0 0 0) !important;
@@ -115,7 +157,7 @@
   white-space: nowrap !important;
 }
 
-/* Base document sizing */
+/* Base sizing */
 html,
 body,
 #root {

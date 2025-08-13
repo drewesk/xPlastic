@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NumberFlow, { continuous } from "@number-flow/react";
 import {
   Box,
@@ -11,8 +11,117 @@ import {
   Text,
   Container,
   chakra,
+  Image,
+  Badge,
+  Separator,
 } from "@chakra-ui/react";
 import YouTubePlayer from "react-youtube";
+
+/** 0-deps Parallax (mouse) — sits above video, behind content */
+function ParallaxWaves({
+  backSrc,
+  frontSrc,
+  zIndex = 1,
+}: {
+  backSrc: string;
+  frontSrc: string;
+  zIndex?: number;
+}) {
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const backRef = useRef<HTMLImageElement | null>(null);
+  const frontRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    const isMobile =
+      /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      window.innerWidth < 640;
+    if (prefersReduced || isMobile) return;
+
+    let req = 0;
+    let px = 0,
+      py = 0; // pointer -1..1
+    let tx = 0,
+      ty = 0; // eased target
+    const friction = 0.08;
+    const backAmt = 6;
+    const frontAmt = 18;
+
+    const onMove = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+      const y = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+      px = Math.max(-1, Math.min(1, x));
+      py = Math.max(-1, Math.min(1, y));
+    };
+
+    const tick = () => {
+      tx += (px - tx) * friction;
+      ty += (py - ty) * friction;
+      if (backRef.current) {
+        backRef.current.style.transform = `translate3d(${(
+          -tx * backAmt
+        ).toFixed(2)}px, ${(-ty * backAmt).toFixed(2)}px, 0)`;
+      }
+      if (frontRef.current) {
+        frontRef.current.style.transform = `translate3d(${(
+          tx * frontAmt
+        ).toFixed(2)}px, ${(ty * frontAmt).toFixed(2)}px, 0)`;
+      }
+      req = requestAnimationFrame(tick);
+    };
+
+    el.addEventListener("mousemove", onMove);
+    req = requestAnimationFrame(tick);
+    return () => {
+      el.removeEventListener("mousemove", onMove);
+      cancelAnimationFrame(req);
+    };
+  }, []);
+
+  return (
+    <Box
+      ref={wrapRef}
+      className="parallax-waves"
+      position="absolute"
+      inset={0}
+      zIndex={zIndex}
+      pointerEvents="none"
+      overflow="hidden"
+      style={{ willChange: "transform" }}
+    >
+      <Image
+        ref={backRef}
+        src="https://freesvg.org/img/wave-pattern-tile-arvin61r58.svg"
+        alt=""
+        loading="lazy"
+        pointerEvents="none"
+        w="full"
+        h="auto"
+        objectFit="cover"
+        opacity={0.85}
+        style={{ willChange: "transform" }}
+      />
+      <Image
+        ref={frontRef}
+        src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Great_Wave_off_Kanagawa2.jpg"
+        alt=""
+        loading="lazy"
+        pointerEvents="none"
+        w="full"
+        h="auto"
+        objectFit="cover"
+        opacity={0.95}
+        style={{ willChange: "transform" }}
+      />
+    </Box>
+  );
+}
 
 export default function App() {
   const [val, setVal] = useState(100000);
@@ -50,22 +159,34 @@ export default function App() {
         onEnd={(e) => e.target.playVideo()}
       />
 
-      {/* Header stays above everything */}
+      {/* Header — glass with subtle border */}
       <Box
         as="header"
         position="fixed"
         top="0"
         insetX="0"
         zIndex={4}
-        bg="blue.600"
+        bg="rgba(6,11,18,0.55)"
+        backdropFilter="saturate(140%) blur(8px)"
         color="white"
         borderBottomWidth="1px"
         borderColor="whiteAlpha.300"
-        shadow="sm"
       >
         <Container maxW="6xl" py={3}>
           <HStack justify="space-between">
-            <Heading size="md">Xplastic.io</Heading>
+            <HStack gap={3}>
+              <Box
+                w="8"
+                h="8"
+                rounded="full"
+                bgGradient="linear(to-br, teal.300, cyan.400)"
+                className="pulse-orb"
+              />
+              <Heading size="md" letterSpacing="-0.02em">
+                Xplastic.io
+              </Heading>
+            </HStack>
+
             <HStack gap={4} display={{ base: "none", md: "flex" }}>
               <Button as={chakra.a} href="#about" variant="link" color="white">
                 About
@@ -78,7 +199,12 @@ export default function App() {
               >
                 Contact
               </Button>
-              <Button colorScheme="teal" size="sm">
+              <Button
+                colorScheme="teal"
+                size="sm"
+                className="btn-glow"
+                _hover={{ transform: "translateY(-1px)" }}
+              >
                 Join
               </Button>
             </HStack>
@@ -86,9 +212,9 @@ export default function App() {
         </Container>
       </Box>
 
-      {/* Main content sits in its own stacking context */}
+      {/* Main content */}
       <Box className="app-root" minH="100dvh" position="relative" color="white">
-        <Container maxW="6xl" py={{ base: 10, md: 16 }} position="relative">
+        <Container maxW="6xl" py={{ base: 20, md: 28 }} position="relative">
           {/* SIDE MASKS (above video, below content) */}
           <Box
             aria-hidden
@@ -97,7 +223,7 @@ export default function App() {
             left="0"
             zIndex={-1}
             bg="white"
-            w={{ base: "80px", md: "120px" }}
+            w={{ base: "64px", md: "120px" }}
             pointerEvents="none"
           />
           <Box
@@ -107,66 +233,83 @@ export default function App() {
             right="0"
             zIndex={-1}
             bg="white"
-            w={{ base: "80px", md: "120px" }}
+            w={{ base: "64px", md: "120px" }}
             pointerEvents="none"
           />
 
+          {/* Parallax waves */}
+          <ParallaxWaves
+            backSrc="https://freesvg.org/img/wave-pattern-tile-arvin61r58.svg"
+            frontSrc="https://upload.wikimedia.org/wikipedia/commons/0/0a/Great_Wave_off_Kanagawa2.jpg"
+            zIndex={1}
+          />
+
+          {/* HERO CARD */}
           <Card.Root
-            className="card-2"
+            className="card-2 glass pop-up"
             mt={55}
             rounded="2xl"
             shadow="xl"
-            borderWidth="3px"
+            borderWidth="1px"
+            borderColor="whiteAlpha.300"
             w="full"
             maxW="xl"
             mx="auto"
           >
-            {/* HERO */}
-            <Card.Body p={{ base: 6, md: 10 }}>
-              <Stack align="center" textAlign="center" gap={4}>
+            <Card.Body p={{ base: 8, md: 12 }}>
+              <Stack
+                align="center"
+                textAlign="center"
+                gap={0} // remove if using spacing
+              >
                 <Heading
                   as="h1"
-                  color="white"
                   size={{ base: "2xl", md: "4xl" }}
-                  lineHeight="1.1"
+                  mb={0} // remove margin below heading
+                  lineHeight="1.08"
                   fontWeight="extrabold"
                   letterSpacing="-0.02em"
-                  mb={2}
+                  bgGradient="linear(to-r, cyan.300, teal.200)"
+                  bgClip="text"
                 >
-                  Join the mission!
+                  Cut microplastics from your day
                 </Heading>
 
                 <Text
                   fontSize={{ base: "md", md: "lg" }}
-                  color="whiteAlpha.800"
-                  maxW="3xl"
+                  color="whiteAlpha.900"
+                  maxW="40rem"
+                  mt={0} // ensure no margin-top either
                 >
-                  Reduce your exposure to harmful micro-plastics 🔪
+                  Simple, high-impact habits and gear picks—so you breathe,
+                  drink, and eat cleaner without obsessing.
                 </Text>
 
                 <Box position="relative" w="full" maxW="xl" mx="auto">
                   {/* COUNTER CARD */}
                   <Card.Root
                     mb={6}
-                    className="card-1"
+                    className="card-1 glass-strong"
                     rounded="2xl"
                     shadow="xl"
                     borderWidth="1px"
-                    borderColor="whiteAlpha.900"
+                    borderColor="whiteAlpha.400"
                     p={{ base: 6, md: 8 }}
                     w="full"
-                    maxW="xl"
                   >
                     <Card.Body gap="4" align="center">
-                      <Text fontSize="lg" color="whiteAlpha.700">
-                        Over{" "}
+                      <Text fontSize="md" color="whiteAlpha.800">
+                        Estimated marine lives lost yearly due to plastic
+                        pollution:
+                      </Text>
+
+                      <Heading as="h2" size="2xl" letterSpacing="-0.02em">
                         <NumberFlow
                           value={val}
                           plugins={[continuous]}
                           format={{ useGrouping: true }}
-                        />{" "}
-                        marine animals die each year from plastics.
-                      </Text>
+                        />
+                      </Heading>
 
                       {/* Email capture */}
                       <Box
@@ -181,7 +324,7 @@ export default function App() {
                           color="whiteAlpha.700"
                           mb="2"
                         >
-                          Join the mailing list
+                          Get the 10-minute starter and ongoing tips
                         </Text>
                         <HStack w="full" spacing="3" align="stretch">
                           <label className="visually-hidden" htmlFor="email">
@@ -196,8 +339,8 @@ export default function App() {
                             _placeholder={{ color: "gray.500" }}
                             required
                           />
-                          <Button type="submit" colorScheme="teal">
-                            Join
+                          <Button type="submit" className="btn-primary">
+                            Get started
                           </Button>
                         </HStack>
                         <Box
@@ -208,9 +351,9 @@ export default function App() {
                         />
                       </Box>
 
-                      {/* External CTA with flowing underline */}
-                      <HStack pt="2" gap={3} wrap="wrap">
-                        <Text>Inspired by Bryan Johnson’s</Text>
+                      {/* External CTA (kept minimal, cleaner line) */}
+                      <HStack pt="2" gap={3} wrap="wrap" opacity={0.9}>
+                        <Text>Longevity reading:</Text>
                         <chakra.a
                           href="https://dontdie.bryanjohnson.com/"
                           target="_blank"
@@ -229,31 +372,33 @@ export default function App() {
         </Container>
       </Box>
 
-      {/* Footer stays above everything */}
+      {/* Footer */}
       <Box
         as="footer"
         position="fixed"
         bottom="0"
         insetX="0"
         zIndex={4}
-        bg="blue.700"
+        bg="rgba(6,11,18,0.65)"
+        backdropFilter="saturate(140%) blur(8px)"
         color="white"
         borderTopWidth="1px"
         borderColor="whiteAlpha.300"
-        shadow="sm"
       >
-        <Container maxW="6xl" py={{ base: 4, md: 5 }}>
-          <HStack justify="space-between" wrap="wrap" gap={2}>
+        <Container maxW="6xl" py={{ base: 3, md: 4 }}>
+          <HStack justify="space-between" wrap="wrap" gap={3}>
             <Text fontWeight="semibold">© {currentYear} Xplastic.io</Text>
-            <Text fontSize="sm" opacity={0.8}>
-              All rights reserved.
+            <Text fontSize="sm" opacity={0.85}>
+              Clean habits. Clear air. Smarter products.
             </Text>
-            <Text>
-              Save the{" "}
-              <Text as="span" fontWeight="semibold">
-                Planet
-              </Text>
-            </Text>
+            <HStack gap={3}>
+              <chakra.a href="#about" opacity={0.9} _hover={{ opacity: 1 }}>
+                About
+              </chakra.a>
+              <chakra.a href="#contact" opacity={0.9} _hover={{ opacity: 1 }}>
+                Contact
+              </chakra.a>
+            </HStack>
           </HStack>
         </Container>
       </Box>
