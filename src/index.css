@@ -8,6 +8,7 @@
 
 .card-2 {
   background-color: #050507db;
+  z-index: 2;
 } /* gray.800 ~85% opacity */
 
 html,
@@ -52,3 +53,27 @@ body,
   .yt-bg iframe {
     width: 100vw;
     height: 56.25vw; /
+  }
+
+.rail-arm {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0; /* lower than rails */
+  fill: none;
+  stroke: #76ccf7;
+  stroke-width: 14;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  top: 45%;
+  transform: translateY(-50%);
+  width: clamp(220px, 40vw, 640px);
+  height: clamp(120px, 30vh, 320px);
+}
+
+.rail-arm.left  { left: 0; }
+.rail-arm.right { right: 0; transform: translateY(-50%) scaleX(-1); }
+
+@media (max-width: 900px){
+  .rail-arm{ width: 50vw; height: 24vh; }
+}

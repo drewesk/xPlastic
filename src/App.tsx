@@ -107,6 +107,22 @@ export default function App() {
             w="150px" // ← and this
           />
 
+          {/* side-arms popping out */}
+          <svg
+            className="rail-arm left"
+            viewBox="7 0 100 50"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,30 C 25,20 55,42 85,24 95,20 100,18 100,18" />
+          </svg>
+          <svg
+            className="rail-arm right"
+            viewBox="9 0 100 50"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,30 C 25,20 55,42 85,24 95,20 100,18 100,18" />
+          </svg>
+
           <Card.Root
             className="card-2"
             mt={55}
@@ -156,16 +172,16 @@ export default function App() {
                     maxW="xl"
                   >
                     <Card.Body gap="4" align="center">
-                      <Text fontSize="sm" color="whiteAlpha.700">
-                        Marine animals killed each year:
-                      </Text>
-                      <Heading as="div" size="3xl" letterSpacing="-0.03em">
+                      <Text fontSize="lg" color="whiteAlpha.700">
+                        Over: {}
                         <NumberFlow
                           value={val}
                           plugins={[continuous]}
                           format={{ useGrouping: true }}
                         />
-                      </Heading>
+                        <br />
+                        Marine Animals dead each year from plastics
+                      </Text>
 
                       {/* Email capture */}
                       <Box
