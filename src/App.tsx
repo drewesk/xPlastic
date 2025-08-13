@@ -257,116 +257,97 @@ export default function App() {
             mx="auto"
           >
             <Card.Body p={{ base: 8, md: 12 }}>
-              <Stack
-                align="center"
-                textAlign="center"
-                gap={0} // remove if using spacing
+              <Text
+                fontSize={{ base: "md", md: "lg" }}
+                color="whiteAlpha.900"
+                maxW="40rem"
+                mt={0} // ensure no margin-top either
               >
-                <Heading
-                  as="h1"
-                  size={{ base: "2xl", md: "4xl" }}
-                  mb={0} // remove margin below heading
-                  lineHeight="1.08"
-                  fontWeight="extrabold"
-                  letterSpacing="-0.02em"
-                  bgGradient="linear(to-r, cyan.300, teal.200)"
-                  bgClip="text"
+                Simple, high-impact habits and gear picks—so you breathe, drink,
+                and eat cleaner without obsessing.
+              </Text>
+
+              <Box position="relative" w="full" maxW="xl" mx="auto">
+                {/* COUNTER CARD */}
+                <Card.Root
+                  mb={6}
+                  className="card-1 glass-strong"
+                  rounded="2xl"
+                  shadow="xl"
+                  borderWidth="1px"
+                  borderColor="whiteAlpha.400"
+                  p={{ base: 6, md: 8 }}
+                  w="full"
                 >
-                  Cut microplastics from your day
-                </Heading>
+                  <Card.Body gap="4" align="center">
+                    <Text fontSize="md" color="whiteAlpha.800">
+                      Estimated marine lives lost yearly due to plastic
+                      pollution:
+                    </Text>
 
-                <Text
-                  fontSize={{ base: "md", md: "lg" }}
-                  color="whiteAlpha.900"
-                  maxW="40rem"
-                  mt={0} // ensure no margin-top either
-                >
-                  Simple, high-impact habits and gear picks—so you breathe,
-                  drink, and eat cleaner without obsessing.
-                </Text>
+                    <Heading as="h2" size="2xl" letterSpacing="-0.02em">
+                      <NumberFlow
+                        value={val}
+                        plugins={[continuous]}
+                        format={{ useGrouping: true }}
+                      />
+                    </Heading>
 
-                <Box position="relative" w="full" maxW="xl" mx="auto">
-                  {/* COUNTER CARD */}
-                  <Card.Root
-                    mb={6}
-                    className="card-1 glass-strong"
-                    rounded="2xl"
-                    shadow="xl"
-                    borderWidth="1px"
-                    borderColor="whiteAlpha.400"
-                    p={{ base: 6, md: 8 }}
-                    w="full"
-                  >
-                    <Card.Body gap="4" align="center">
-                      <Text fontSize="md" color="whiteAlpha.800">
-                        Estimated marine lives lost yearly due to plastic
-                        pollution:
-                      </Text>
-
-                      <Heading as="h2" size="2xl" letterSpacing="-0.02em">
-                        <NumberFlow
-                          value={val}
-                          plugins={[continuous]}
-                          format={{ useGrouping: true }}
-                        />
-                      </Heading>
-
-                      {/* Email capture */}
-                      <Box
-                        as="form"
-                        onSubmit={(e) => e.preventDefault()}
-                        w="full"
-                        aria-labelledby="newsletter-title"
+                    {/* Email capture */}
+                    <Box
+                      as="form"
+                      onSubmit={(e) => e.preventDefault()}
+                      w="full"
+                      aria-labelledby="newsletter-title"
+                    >
+                      <Text
+                        id="newsletter-title"
+                        fontSize="sm"
+                        color="whiteAlpha.700"
+                        mb="2"
                       >
-                        <Text
-                          id="newsletter-title"
-                          fontSize="sm"
-                          color="whiteAlpha.700"
-                          mb="2"
-                        >
-                          Get the 10-minute starter and ongoing tips
-                        </Text>
-                        <HStack w="full" spacing="3" align="stretch">
-                          <label className="visually-hidden" htmlFor="email">
-                            Email address
-                          </label>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="you@company.com"
-                            bg="white"
-                            color="gray.900"
-                            _placeholder={{ color: "gray.500" }}
-                            required
-                          />
-                          <Button type="submit" className="btn-primary">
-                            Get started
-                          </Button>
-                        </HStack>
-                        <Box
-                          aria-live="polite"
-                          mt="2"
-                          fontSize="sm"
-                          color="whiteAlpha.800"
+                        Get the 10-minute starter and ongoing tips
+                      </Text>
+                      <HStack w="full" spacing="3" align="stretch">
+                        <label className="visually-hidden" htmlFor="email">
+                          Email address
+                        </label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="you@company.com"
+                          bg="white"
+                          color="gray.900"
+                          _placeholder={{ color: "gray.500" }}
+                          required
                         />
-                      </Box>
-
-                      {/* External CTA (kept minimal, cleaner line) */}
-                      <HStack pt="2" gap={3} wrap="wrap" opacity={0.9}>
-                        <Text>Longevity reading:</Text>
-                        <chakra.a
-                          href="https://dontdie.bryanjohnson.com/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="link-flow"
-                        >
-                          Don’t Die
-                        </chakra.a>
+                        <Button type="submit" className="btn-primary">
+                          Get started
+                        </Button>
                       </HStack>
-                    </Card.Body>
-                  </Card.Root>
-                </Box>
-              </Stack>
+                      <Box
+                        aria-live="polite"
+                        mt="2"
+                        fontSize="sm"
+                        color="whiteAlpha.800"
+                      />
+                    </Box>
+
+                    {/* External CTA (kept minimal, cleaner line) */}
+                    <HStack pt="2" gap={3} wrap="wrap" opacity={0.9}>
+                      <Text>Longevity reading:</Text>
+                      <chakra.a
+                        href="https://dontdie.bryanjohnson.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link-flow"
+                      >
+                        Don’t Die
+                      </chakra.a>
+                    </HStack>
+                  </Card.Body>
+                </Card.Root>
+              </Box>
             </Card.Body>
           </Card.Root>
         </Container>
